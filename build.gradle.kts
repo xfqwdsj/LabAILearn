@@ -9,7 +9,7 @@ plugins {
     alias(libs.plugins.androidLibrary) apply false
 }
 
-RootProject.project = rootProject
+RootProject.providers = rootProject.providers
 
 tasks.register("releaseAndroidApp") {
     group = "project build"
@@ -261,7 +261,7 @@ tasks.register("installReleaseAndroidApp") {
         }
         cmd.addAll(listOf("install", "-r", apk.absolutePath))
 
-        exec {
+        providers.exec {
             commandLine = cmd
         }
     }
