@@ -1,6 +1,5 @@
 package top.ltfan.labailearn.buildsrc
 
-import org.gradle.kotlin.dsl.provideDelegate
 import java.io.File
 import java.util.*
 import kotlin.properties.ReadWriteProperty

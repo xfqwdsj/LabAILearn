@@ -1,9 +1,11 @@
 package top.ltfan.labailearn.buildsrc
 
-object Version {
+import org.gradle.api.Project
+
+open class ProjectVersion(internal val project: Project) {
     private val _versionTag by lazy {
         Commandline(
-            RootProject.providers, {
+            project.providers, {
                 commandLine = listOf("git", "describe", "--tags", "--abbrev=0", "--match=v*")
                 isIgnoreExitValue = true
             }) { normalExitWithStandardOutput { it.substringAfter("v") } ?: "0.1.0" }
@@ -12,7 +14,7 @@ object Version {
 
     private val _commitSha by lazy {
         Commandline(
-            RootProject.providers, {
+            project.providers, {
                 commandLine = listOf("git", "rev-parse", "--short", "HEAD")
                 isIgnoreExitValue = true
             }) { normalExitWithStandardOutput { it } ?: "0000000" }
@@ -23,7 +25,7 @@ object Version {
 
     private val _versionCode by lazy {
         Commandline(
-            RootProject.providers, {
+            project.providers, {
                 commandLine = listOf("git", "rev-list", "--count", "main")
                 isIgnoreExitValue = true
             }) { normalExitWithStandardOutput { it.toInt() } ?: 1 }

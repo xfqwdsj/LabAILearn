@@ -7,9 +7,9 @@ plugins {
     alias(libs.plugins.composeCompiler) apply false
     alias(libs.plugins.androidApplication) apply false
     alias(libs.plugins.androidLibrary) apply false
+    id("top.ltfan.gradle-plugin")
 }
 
-RootProject.providers = rootProject.providers
 
 tasks.register("releaseAndroidApp") {
     group = "project build"
@@ -19,7 +19,7 @@ tasks.register("releaseAndroidApp") {
 
     doLast {
         val apkDir = file(project("compose-app").layout.buildDirectory.dir("outputs/apk/release"))
-        val outputDir = file(outputDirectoryOf("android"))
+        val outputDir = file(output.directoryOf("android"))
         apkDir.copyRecursively(outputDir, overwrite = true)
         logger.lifecycle("output directory: ${outputDir.absolutePath}")
     }
@@ -32,17 +32,17 @@ tasks.register("releaseDesktopAppUberJar") {
     dependsOn("compose-app:packageReleaseUberJarForCurrentOS")
 
     doLast {
-        val outputDir = file(outputDirectoryOf("desktop-uber-jar"))
+        val outputDir = file(output.directoryOf("desktop-uber-jar"))
         file(project("compose-app").layout.buildDirectory.dir("compose/jars")).listFiles()?.filter {
             val version =
                 if (operatingSystem.isWindows) {
-                    Regex("""(\d+\.\d+\.\d+).*""").find(Version.versionTag)?.groupValues?.get(1)!!
-                } else Version.versionName
+                    Regex("""(\d+\.\d+\.\d+).*""").find(projectVersion.versionTag)?.groupValues?.get(1)!!
+                } else projectVersion.versionName
             it.name.contains(version) && it.name.endsWith(".jar")
         }?.forEach {
             val arch = Regex(".+?-.+?-(.+?)-.+").find(it.name)?.groupValues?.get(1) ?: return@forEach
             it.copyTo(
-                outputDir.resolve("lal-${operatingSystem.familyName}-${Version.versionName}-${arch}.jar"),
+                outputDir.resolve("lal-${operatingSystem.familyName}-${projectVersion.versionName}-${arch}.jar"),
                 overwrite = true
             )
             logger.lifecycle("output directory: ${outputDir.absolutePath}")
@@ -62,12 +62,12 @@ tasks.register<Tar>("releaseLinuxAppAndTar") {
 
     archiveBaseName = "lal"
     archiveAppendix = "linux"
-    archiveVersion = Version.versionName
+    archiveVersion = projectVersion.versionName
     archiveClassifier = SystemEnvironment.arch
     archiveExtension = "tar"
     compression = Compression.GZIP
-    destinationDirectory = file(outputDirectoryOf("linux-tar"))
-    from(file(outputDirectoryOf("desktop/main-release/app/LabAILearn")))
+    destinationDirectory = file(output.directoryOf("linux-tar"))
+    from(file(output.directoryOf("desktop/main-release/app/LabAILearn")))
 }
 
 tasks.register<Zip>("releaseWindowsAppAndZip") {
@@ -82,11 +82,11 @@ tasks.register<Zip>("releaseWindowsAppAndZip") {
 
     archiveBaseName = "lal"
     archiveAppendix = "windows"
-    archiveVersion = Version.versionName
+    archiveVersion = projectVersion.versionName
     archiveClassifier = SystemEnvironment.arch
     archiveExtension = "zip"
-    destinationDirectory = file(outputDirectoryOf("windows-zip"))
-    from(file(outputDirectoryOf("desktop/main-release/app/LabAILearn")))
+    destinationDirectory = file(output.directoryOf("windows-zip"))
+    from(file(output.directoryOf("desktop/main-release/app/LabAILearn")))
 }
 
 tasks.register("releaseDesktopAppAndArchive") {
@@ -120,7 +120,7 @@ tasks.register("releaseWebApp") {
     dependsOn("compose-app:wasmJsBrowserDistribution")
 
     doLast {
-        val outputDir = file(outputDirectoryOf("web"))
+        val outputDir = file(output.directoryOf("web"))
         file("res/lal.ico").copyTo(outputDir.resolve("favicon.ico"), overwrite = true)
         logger.lifecycle("output directory: ${outputDir.absolutePath}")
     }
@@ -134,11 +134,11 @@ tasks.register<Tar>("releaseWebAppAndTar") {
 
     archiveBaseName = "lal"
     archiveAppendix = "web"
-    archiveVersion = Version.versionName
+    archiveVersion = projectVersion.versionName
     archiveExtension = "tar"
     compression = Compression.GZIP
-    destinationDirectory = file(outputDirectoryOf("web-tar"))
-    from(file(outputDirectoryOf("web")))
+    destinationDirectory = file(output.directoryOf("web-tar"))
+    from(file(output.directoryOf("web")))
 }
 
 tasks.register("ciReleaseLinuxApp") {
@@ -153,22 +153,22 @@ tasks.register("ciReleaseLinuxApp") {
 
     doLast {
         val assetsDir = file(layout.buildDirectory.dir("assets"))
-        file(outputDirectoryOf("android")).listFiles()?.filter { it.name.endsWith(".apk") }?.forEach { file ->
+        file(output.directoryOf("android")).listFiles()?.filter { it.name.endsWith(".apk") }?.forEach { file ->
             file.name.substringAfter("compose-app-").substringBefore("-release").let {
                 file.copyTo(
-                    assetsDir.resolve("lal-android-${Version.versionName}-$it.apk"), overwrite = true
+                    assetsDir.resolve("lal-android-${projectVersion.versionName}-$it.apk"), overwrite = true
                 )
             }
         }
-        file(outputDirectoryOf("desktop/main-release/deb")).listFiles()?.first()?.copyTo(
-            assetsDir.resolve("lal-linux-${Version.versionName}-${SystemEnvironment.arch}.deb"), overwrite = true
+        file(output.directoryOf("desktop/main-release/deb")).listFiles()?.first()?.copyTo(
+            assetsDir.resolve("lal-linux-${projectVersion.versionName}-${SystemEnvironment.arch}.deb"), overwrite = true
         )
-        file(outputDirectoryOf("desktop/main-release/rpm")).listFiles()?.first()?.copyTo(
-            assetsDir.resolve("lal-linux-${Version.versionName}-${SystemEnvironment.arch}.rpm"), overwrite = true
+        file(output.directoryOf("desktop/main-release/rpm")).listFiles()?.first()?.copyTo(
+            assetsDir.resolve("lal-linux-${projectVersion.versionName}-${SystemEnvironment.arch}.rpm"), overwrite = true
         )
-        file(outputDirectoryOf("linux-tar")).copyRecursively(assetsDir, overwrite = true)
-        file(outputDirectoryOf("web")).copyRecursively(assetsDir.resolve("web"), overwrite = true)
-        file(outputDirectoryOf("web-tar")).copyRecursively(assetsDir, overwrite = true)
+        file(output.directoryOf("linux-tar")).copyRecursively(assetsDir, overwrite = true)
+        file(output.directoryOf("web")).copyRecursively(assetsDir.resolve("web"), overwrite = true)
+        file(output.directoryOf("web-tar")).copyRecursively(assetsDir, overwrite = true)
     }
 }
 
@@ -184,9 +184,9 @@ tasks.register("ciReleaseWindowsApp") {
 
     doLast {
         val assetsDir = file(layout.buildDirectory.dir("assets"))
-        file(outputDirectoryOf("windows-zip")).copyRecursively(assetsDir, overwrite = true)
-        file(outputDirectoryOf("desktop/main-release/msi")).listFiles()?.first()?.copyTo(
-            assetsDir.resolve("lal-windows-${Version.versionName}-${SystemEnvironment.arch}.msi"), overwrite = true
+        file(output.directoryOf("windows-zip")).copyRecursively(assetsDir, overwrite = true)
+        file(output.directoryOf("desktop/main-release/msi")).listFiles()?.first()?.copyTo(
+            assetsDir.resolve("lal-windows-${projectVersion.versionName}-${SystemEnvironment.arch}.msi"), overwrite = true
         )
     }
 }
@@ -203,7 +203,7 @@ tasks.register("ciReleaseApp") {
 
     doLast {
         val assetsDir = file(layout.buildDirectory.dir("assets"))
-        file(outputDirectoryOf("desktop-uber-jar")).copyRecursively(assetsDir, overwrite = true)
+        file(output.directoryOf("desktop-uber-jar")).copyRecursively(assetsDir, overwrite = true)
     }
 }
 
@@ -253,7 +253,7 @@ tasks.register("installReleaseAndroidApp") {
     dependsOn("releaseAndroidApp")
 
     doLast {
-        val apk = file(outputDirectoryOf("android")).listFiles()!!.first { it.name.endsWith(".apk") }!!
+        val apk = file(output.directoryOf("android")).listFiles()!!.first { it.name.endsWith(".apk") }!!
         val cmd = mutableListOf("adb")
         if (hasProperty("device")) {
             cmd.add("-s")

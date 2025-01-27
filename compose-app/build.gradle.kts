@@ -4,8 +4,6 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalDistributionDsl
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
-import top.ltfan.labailearn.buildsrc.Version
-import top.ltfan.labailearn.buildsrc.outputDirectoryOf
 import java.time.Year
 import java.util.*
 
@@ -14,6 +12,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    id("top.ltfan.gradle-plugin")
 }
 
 val androidCompileSdk: String by project
@@ -47,7 +46,7 @@ kotlin {
                 }
             }
             @OptIn(ExperimentalDistributionDsl::class) distribution {
-                outputDirectory = outputDirectoryOf("web")
+                outputDirectory = output.directoryOf("web")
             }
         }
         binaries.executable()
@@ -102,8 +101,8 @@ android {
         applicationId = "top.ltfan.labailearn"
         minSdk = androidMinSdk.toInt()
         targetSdk = androidTargetSdk.toInt()
-        versionCode = Version.versionCode
-        versionName = Version.versionName
+        versionCode = projectVersion.versionCode
+        versionName = projectVersion.versionName
     }
     packaging {
         resources {
@@ -172,19 +171,19 @@ compose.desktop {
             } xfqwdsj. All Rights Reserved."
             vendor = "xfqwdsj"
             licenseFile = rootProject.file("LICENSE")
-            outputBaseDir = outputDirectoryOf("desktop")
+            outputBaseDir = output.directoryOf("desktop")
 
             linux {
-                packageVersion = Version.versionName
+                packageVersion = projectVersion.versionName
                 debMaintainer = "xfqwdsj@qq.com"
-                rpmPackageVersion = Version.versionName.replace("-", "")
+                rpmPackageVersion = projectVersion.versionName.replace("-", "")
                 rpmLicenseType = "GPL-3.0-or-later"
                 menuGroup = "Utility"
                 iconFile.set(rootProject.file("res/lal.png"))
             }
 
             windows {
-                packageVersion = Regex("""(\d+\.\d+\.\d+).*""").find(Version.versionTag)?.groupValues?.get(1)!!
+                packageVersion = Regex("""(\d+\.\d+\.\d+).*""").find(projectVersion.versionTag)?.groupValues?.get(1)!!
                 dirChooser = true
                 menuGroup = "LabAILearn"
                 upgradeUuid = "01935949-91c0-7a0d-bbfb-3fcee898e745"
