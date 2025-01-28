@@ -9,6 +9,7 @@ import java.util.*
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
+    alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
@@ -57,21 +58,31 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
+                implementation(libs.kotlinx.serialization.json)
                 implementation(compose.runtime)
                 implementation(compose.foundation)
                 implementation(compose.animation)
                 implementation(compose.material3)
+                implementation(compose.material3AdaptiveNavigationSuite)
                 implementation(compose.materialIconsExtended)
                 implementation(compose.ui)
                 implementation(compose.components.resources)
                 implementation(libs.androidx.lifecycle.runtime.compose)
                 implementation(libs.androidx.lifecycle.viewmodel)
+                implementation(libs.androidx.navigation.compose)
+                implementation(libs.compose.material3.adaptive.layout)
+                implementation(libs.compose.material3.adaptive.navigation)
+                implementation(libs.compose.material3.windowSizeClass)
                 implementation(libs.haze)
+                implementation(libs.haze.materials)
             }
         }
 
         val commonJvmMain by creating {
             dependsOn(commonMain)
+            dependencies {
+                implementation(compose.preview)
+            }
         }
 
         val androidMain by getting {
