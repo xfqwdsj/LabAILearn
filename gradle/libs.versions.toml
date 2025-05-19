@@ -10,7 +10,7 @@ androidx-activity-compose = "1.10.0"
 androidx-navigation = "2.9.0-alpha17"
 compose-multiplatform = "1.8.0"
 compose-material3-adaptive = "1.1.0-rc01"
-haze = "1.6.0"
+haze = "1.6.1"
 
 [libraries]
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinx-coroutines" }
