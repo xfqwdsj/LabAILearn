@@ -42,7 +42,7 @@ jobs:
           java-version: '21'
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v4
 
       - if: matrix.os == 'ubuntu-latest'
         name: Setup Android SDK
@@ -87,7 +87,7 @@ jobs:
       - if: github.event_name == 'push' && matrix.platform == 'Android, Linux, Web'
         name: Upload Pages artifact
         id: deployment
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
           path: build/assets/web
 
