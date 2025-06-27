@@ -14,20 +14,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
-import dev.chrisbanes.haze.*
+import dev.chrisbanes.haze.ExperimentalHazeApi
+import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
-import dev.chrisbanes.haze.materials.HazeMaterials
 import labailearn.compose_app.generated.resources.Res
 import labailearn.compose_app.generated.resources.app_name
 import org.jetbrains.compose.resources.stringResource
-import top.ltfan.labailearn.ui.AppViewModel
-import top.ltfan.labailearn.ui.AppWindowInsets
-import top.ltfan.labailearn.ui.HazeAppBarType
-import top.ltfan.labailearn.ui.appBarHazeEffect
+import top.ltfan.labailearn.ui.*
 import top.ltfan.labailearn.ui.component.*
-import top.ltfan.labailearn.ui.hazeSource
 import top.ltfan.labailearn.ui.theme.AppTheme
 
 @OptIn(
@@ -38,10 +33,8 @@ import top.ltfan.labailearn.ui.theme.AppTheme
 )
 @Composable
 fun App() {
-    val viewModel = viewModel { AppViewModel() }
-    val navController = rememberNavController()
-    with(viewModel) {
-        with(navController) {
+    with(viewModel { AppViewModel() }) {
+        with(rememberNavController()) {
             with(remember { HazeState() }) {
                 AppTheme {
                     AdaptiveScaffold(
@@ -103,11 +96,7 @@ fun App() {
                             AppWindowInsets.asPaddingValues().calculateStartPadding(layoutDirection)
 
                         SharedTransitionLayout {
-                            NavHost(
-                                navController,
-                                startDestination = main.pages.first(),
-                                modifier = Modifier.hazeSource()
-                            ) {
+                            NavHost(startDestination = main.pages.first(), modifier = Modifier.hazeSource()) {
                                 with(padding) { main.pages.forEach { with(it) { builder(windowAdaptiveInfo) } } }
 
                                 val subpagePadding = PaddingValues(start = paddingStart - insetsPaddingStart)
