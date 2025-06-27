@@ -95,7 +95,7 @@ fun App() {
                             main.pages.forEach { route ->
                                 item(
                                     selected = currentPage == route,
-                                    onClick = { main.navigate(route) },
+                                    onClick = { if (currentPage != route) main.navigate(route) },
                                     icon = { Icon(route.icon, contentDescription = stringResource(route.label)) },
                                     label = { Text(stringResource(route.label)) },
                                 )
