@@ -4,8 +4,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.layout.SubcomposeLayout
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
 import top.ltfan.labailearn.data.Tool
@@ -21,14 +21,6 @@ fun ToolCard(
     with(tool) {
         OutlinedCard(onClick = onToolClick, modifier = modifier) {
             SubcomposeLayout { constraints ->
-                val background = subcompose("background") {
-                    Icon(
-                        icon, contentDescription = null,
-                        modifier = Modifier.size(128.dp).clipToBounds(),
-                        tint = MaterialTheme.colorScheme.surfaceContainerHighest,
-                    )
-                }.first().measure(constraints)
-
                 val content = subcompose("content") {
                     Column(Modifier.fillMaxWidth()) {
                         Spacer(Modifier.height(16.dp))
@@ -47,11 +39,15 @@ fun ToolCard(
                     }
                 }.first().measure(constraints)
 
-                layout(content.width, content.height) {
-                    background.place(
-                        content.width - background.width + 32.dp.roundToPx(),
-                        content.height - background.height + 32.dp.roundToPx()
-                    )
+                val width = if (constraints.hasBoundedWidth) constraints.maxWidth else content.width
+                val height = if (constraints.hasBoundedHeight) constraints.maxHeight else content.height
+
+                val background = subcompose("background") {
+                    Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.surfaceContainerHighest)
+                }.first().measure(Constraints.fixed(height * 3 / 4, height * 3 / 4))
+
+                layout(width, height) {
+                    background.place(width - background.width * 3 / 4, height - background.height * 3 / 4)
                     content.place(0, 0)
                 }
             }
