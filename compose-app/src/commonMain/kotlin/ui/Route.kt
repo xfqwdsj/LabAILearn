@@ -76,19 +76,46 @@ abstract class Route {
             }
         }
 
-        inline fun <reified T : Any> NavGraphBuilder.composableWithSlideTransition(
+        context(viewModel: AppViewModel) inline fun <reified T : Any> NavGraphBuilder.composableWithSlideTransition(
             typeMap: Map<KType, @JvmSuppressWildcards NavType<*>> = emptyMap(),
             deepLinks: List<NavDeepLink> = emptyList(),
             noinline sizeTransform: (AnimatedContentTransitionScope<NavBackStackEntry>.() -> @JvmSuppressWildcards SizeTransform?)? = null,
             noinline content: @Composable (AnimatedContentScope.(NavBackStackEntry) -> Unit)
         ) {
+            val pages = viewModel.main.pages.map { it::class.qualifiedName }
+
+            val getDirection: AnimatedContentTransitionScope<NavBackStackEntry>.() -> AnimatedContentTransitionScope.SlideDirection =
+                getDirection@{
+                    val from = try {
+                        println(initialState)
+                        pages.indexOf(initialState.destination.route)
+                    } catch (e: IllegalArgumentException) {
+                        e.printStackTrace()
+                        return@getDirection AnimatedContentTransitionScope.SlideDirection.Start
+                    }
+
+                    val to = try {
+                        println(targetState)
+                        pages.indexOf(targetState.destination.route)
+                    } catch (e: IllegalArgumentException) {
+                        e.printStackTrace()
+                        return@getDirection AnimatedContentTransitionScope.SlideDirection.Start
+                    }
+
+                    if (to > from) {
+                        AnimatedContentTransitionScope.SlideDirection.Start
+                    } else {
+                        AnimatedContentTransitionScope.SlideDirection.End
+                    }
+                }
+
             composable<T>(
                 typeMap = typeMap,
                 deepLinks = deepLinks,
-                enterTransition = { slideInHorizontally { it / 2 } + fadeIn() },
-                exitTransition = { slideOutHorizontally() + fadeOut() },
-                popEnterTransition = { slideInHorizontally() + fadeIn() },
-                popExitTransition = { slideOutHorizontally { it / 2 } + fadeOut() },
+                enterTransition = { slideIntoContainer(getDirection()) + fadeIn() },
+                exitTransition = { slideOutOfContainer(getDirection()) + fadeOut() },
+                popEnterTransition = { slideIntoContainer(getDirection()) + fadeIn() },
+                popExitTransition = { slideOutOfContainer(getDirection()) + fadeOut() },
                 sizeTransform = sizeTransform,
                 content = content
             )

@@ -7,6 +7,7 @@ import androidx.compose.material3.*
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteDefaults
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -41,6 +42,7 @@ fun App() {
                 val hazeState = remember { HazeState() }
                 AdaptiveScaffold(
                     topBar = { contentPadding ->
+                        val currentPage by currentPageAsState
                         AnimatedSlide(
                             active = main.pages.any { it == currentPage },
                             slideDirection = SlideDirection.Top,
@@ -60,7 +62,7 @@ fun App() {
                         }
                     },
                     navigationSuite = { layoutType ->
-                        val currentPage = currentPage
+                        val currentPage by currentPageAsState
                         NavigationSuite(
                             modifier = Modifier.run {
                                 if (layoutType == NavigationSuiteType.NavigationBar) {

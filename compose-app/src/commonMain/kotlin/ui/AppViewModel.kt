@@ -1,8 +1,10 @@
 package top.ltfan.labailearn.ui
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.State
+import androidx.compose.runtime.derivedStateOf
 import androidx.lifecycle.ViewModel
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -41,13 +43,16 @@ class AppViewModel : ViewModel() {
             get() = routes[this] ?: error("Tool $this does not have a route defined")
     }
 
-    val NavController.currentPage: Route
+    val NavController.currentPageAsState: State<Route>
         @Composable inline get() {
-            val navBackStackEntry by currentBackStackEntryAsState()
-            val pages = main.pages + tools.routes.values
-            return pages.find { route -> navBackStackEntry?.destination?.hierarchy?.any { it.hasRoute(route::class) } == true }
-                ?: pages.first()
+            val navBackStackEntry = currentBackStackEntryAsState()
+            return derivedStateOf { navBackStackEntry.value?.currentPage ?: pages.first() }
         }
+
+    val NavBackStackEntry.currentPage: Route?
+        get() = pages.find { route -> destination.hierarchy.any { it.hasRoute(route::class) } }
+
+    val pages = main.pages + tools.routes.values
 
     interface Main {
         val pages: List<Route.Main>
