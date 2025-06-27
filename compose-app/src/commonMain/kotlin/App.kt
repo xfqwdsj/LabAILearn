@@ -4,6 +4,7 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteDefaults
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
@@ -104,6 +105,7 @@ fun App() {
                     },
                     contentWindowInsets = AppWindowInsets,
                 ) { padding ->
+                    val windowAdaptiveInfo = currentWindowAdaptiveInfo()
                     val layoutDirection = LocalLayoutDirection.current
                     val paddingStart = padding.calculateStartPadding(layoutDirection)
                     val insetsPaddingStart = AppWindowInsets.asPaddingValues().calculateStartPadding(layoutDirection)
@@ -114,10 +116,14 @@ fun App() {
                             startDestination = main.pages.first(),
                             modifier = Modifier.hazeSource(hazeState)
                         ) {
-                            with(padding) { main.pages.forEach { with(it) { builder() } } }
+                            with(padding) { main.pages.forEach { with(it) { builder(windowAdaptiveInfo) } } }
 
                             val subpagePadding = PaddingValues(start = paddingStart - insetsPaddingStart)
-                            with(subpagePadding) { with(tools) { builtinTools.forEach { with(it.route) { builder() } } } }
+                            with(subpagePadding) {
+                                with(tools) {
+                                    builtinTools.forEach { with(it.route) { builder(windowAdaptiveInfo) } }
+                                }
+                            }
                         }
                     }
                 }
