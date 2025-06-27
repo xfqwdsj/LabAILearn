@@ -3,33 +3,19 @@ package top.ltfan.labailearn.ui
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.ViewModel
+import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import top.ltfan.labailearn.data.Tool
 
-class AppViewModel(val navController: NavHostController) : ViewModel() {
-    interface Main {
-        val pages: List<Route.Main>
-
-        val currentPage: Route.Main @Composable get
-
-        fun navigate(destination: Route.Main)
-    }
-
+class AppViewModel : ViewModel() {
     val main = object : Main {
         override val pages = listOf<Route.Main>(
-            Route.Main.Overview, Route.Main.Tools, Route.Main.Settings
+            Route.Main.Overview(), Route.Main.Tools(), Route.Main.Settings()
         ) // 不加 <Route.Main> 会导致 WasmJs编译失败
 
-        override val currentPage: Route.Main
-            @Composable get() {
-                val navBackStackEntry by navController.currentBackStackEntryAsState()
-                return pages.find { route -> navBackStackEntry?.destination?.hierarchy?.any { it.hasRoute(route::class) } == true }
-                    ?: Route.Main.Overview
-            }
-
-        override fun navigate(destination: Route.Main) {
+        context(navController: NavController) override fun navigate(destination: Route.Main) {
             navController.navigate(destination) {
                 // Pop up to the start destination of the graph to
                 // avoid building up a large stack of destinations
@@ -44,5 +30,33 @@ class AppViewModel(val navController: NavHostController) : ViewModel() {
                 restoreState = true
             }
         }
+    }
+
+    val tools = object : Tools {
+        override val builtinTools: List<Tool> = listOf()
+
+        override val routes: Map<Tool, Route> = builtinTools.associateWith { it.routeBuilder() }
+
+        override val Tool.route: Route
+            get() = routes[this] ?: error("Tool $this does not have a route defined")
+    }
+
+    val NavController.currentPage: Route
+        @Composable inline get() {
+            val navBackStackEntry by currentBackStackEntryAsState()
+            val pages = main.pages + tools.routes.values
+            return pages.find { route -> navBackStackEntry?.destination?.hierarchy?.any { it.hasRoute(route::class) } == true }
+                ?: pages.first()
+        }
+
+    interface Main {
+        val pages: List<Route.Main>
+        context(navController: NavController) fun navigate(destination: Route.Main)
+    }
+
+    interface Tools {
+        val builtinTools: List<Tool>
+        val routes: Map<Tool, Route>
+        val Tool.route: Route
     }
 }
