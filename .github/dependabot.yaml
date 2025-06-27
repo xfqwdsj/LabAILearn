@@ -7,8 +7,6 @@ updates:
       timezone: Asia/Shanghai
     assignees:
       - xfqwdsj
-    reviewers:
-      - xfqwdsj
   - package-ecosystem: github-actions
     directory: .github/workflows
     commit-message:
