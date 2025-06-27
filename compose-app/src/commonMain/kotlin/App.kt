@@ -88,7 +88,7 @@ fun App() {
                                 navigationRailContainerColor = Color.Transparent,
                                 navigationDrawerContainerColor = Color.Transparent
                             ),
-                            windowInsets = NavigationSuiteDefaults.windowInsets(AppWindowInsets),
+                            windowInsets = NavigationSuiteDefaults.windowInsetsWithDefaultSides(AppWindowInsets),
                         ) {
                             main.pages.forEach { route ->
                                 item(

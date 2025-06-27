@@ -314,8 +314,21 @@ data class NavigationSuiteWindowInsets(
 )
 
 @Composable
-fun NavigationSuiteDefaults.windowInsets(all: WindowInsets = WindowInsets.safeContent): NavigationSuiteWindowInsets {
-    return windowInsets(all, all, all)
+fun NavigationSuiteDefaults.windowInsetsWithDefaultSides(all: WindowInsets): NavigationSuiteWindowInsets {
+    return windowInsetsWithDefaultSides(all, all, all)
+}
+
+@Composable
+fun NavigationSuiteDefaults.windowInsetsWithDefaultSides(
+    navigationBarWindowInsets: WindowInsets = WindowInsets.safeContent.only(WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom),
+    navigationRailWindowInsets: WindowInsets = WindowInsets.safeContent.only(WindowInsetsSides.Vertical + WindowInsetsSides.Start),
+    navigationDrawerWindowInsets: WindowInsets = WindowInsets.safeContent.only(WindowInsetsSides.Vertical + WindowInsetsSides.Start)
+): NavigationSuiteWindowInsets {
+    return windowInsets(
+        navigationBarWindowInsets = navigationBarWindowInsets.only(WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom),
+        navigationRailWindowInsets = navigationRailWindowInsets.only(WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom),
+        navigationDrawerWindowInsets = navigationDrawerWindowInsets.only(WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom)
+    )
 }
 
 @Suppress("UnusedReceiverParameter")
