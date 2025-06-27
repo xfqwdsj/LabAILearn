@@ -1,6 +1,7 @@
 [versions]
 kotlin = "2.1.21"
 kotlinx-coroutines = "1.10.2"
+kotlinx-datetime = "0.6.2"
 kotlinx-serialization = "1.8.1"
 agp = "8.10.0"
 androidx-core-splashscreen = "1.0.1"
@@ -16,6 +17,7 @@ haze = "1.6.4"
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-swing = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
+kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinx-datetime" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "androidx-core-splashscreen" }
 androidx-window = { module = "androidx.window:window", version.ref = "androidx-window" }
