@@ -24,7 +24,10 @@ import labailearn.compose_app.generated.resources.app_name
 import org.jetbrains.compose.resources.stringResource
 import top.ltfan.labailearn.ui.AppViewModel
 import top.ltfan.labailearn.ui.AppWindowInsets
+import top.ltfan.labailearn.ui.HazeAppBarType
+import top.ltfan.labailearn.ui.appBarHazeEffect
 import top.ltfan.labailearn.ui.component.*
+import top.ltfan.labailearn.ui.hazeSource
 import top.ltfan.labailearn.ui.theme.AppTheme
 
 @OptIn(
@@ -39,89 +42,79 @@ fun App() {
     val navController = rememberNavController()
     with(viewModel) {
         with(navController) {
-            AppTheme {
-                val hazeState = remember { HazeState() }
-                AdaptiveScaffold(
-                    topBar = { contentPadding ->
-                        val currentPage by currentPageAsState
-                        AnimatedSlide(
-                            active = main.pages.any { it == currentPage },
-                            slideDirection = SlideDirection.Top,
-                        ) {
-                            CenterAlignedTopAppBar(
-                                title = { Text(stringResource(Res.string.app_name)) },
-                                modifier = Modifier.hazeEffect(
-                                    hazeState, style = HazeMaterials.regular()
-                                ) {
-                                    inputScale = HazeInputScale.Auto
-                                    progressive =
-                                        HazeProgressive.verticalGradient(startIntensity = 1f, endIntensity = 0f)
-                                }.padding(contentPadding),
-                                colors = TopAppBarDefaults.largeTopAppBarColors(Color.Transparent),
-                                windowInsets = AppWindowInsets.only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top)
-                            )
-                        }
-                    },
-                    navigationSuite = { layoutType ->
-                        val currentPage by currentPageAsState
-                        NavigationSuite(
-                            modifier = Modifier.run {
-                                if (layoutType == NavigationSuiteType.NavigationBar) {
-                                    hazeEffect(
-                                        hazeState, style = HazeMaterials.regular()
-                                    ) {
-                                        inputScale = HazeInputScale.Auto
-                                        progressive =
-                                            HazeProgressive.verticalGradient(startIntensity = 0f, endIntensity = 1f)
-                                    }
-                                } else this
-                            },
-                            layoutType = layoutType,
-                            containers = NavigationSuiteDefaults.containers(
-                                navigationBarContainer = { content ->
-                                    AnimatedSlide(
-                                        active = main.pages.any { page -> page == currentPage },
-                                        slideDirection = SlideDirection.Bottom,
-                                        content = content
-                                    )
-                                },
-                            ),
-                            colors = NavigationSuiteDefaults.colors(
-                                navigationBarContainerColor = Color.Transparent,
-                                navigationRailContainerColor = Color.Transparent,
-                                navigationDrawerContainerColor = Color.Transparent
-                            ),
-                            windowInsets = NavigationSuiteDefaults.windowInsetsWithDefaultSides(AppWindowInsets),
-                        ) {
-                            main.pages.forEach { route ->
-                                item(
-                                    selected = currentPage == route,
-                                    onClick = { if (currentPage != route) main.navigate(route) },
-                                    icon = { Icon(route.icon, contentDescription = stringResource(route.label)) },
-                                    label = { Text(stringResource(route.label)) },
+            with(remember { HazeState() }) {
+                AppTheme {
+                    AdaptiveScaffold(
+                        topBar = { contentPadding ->
+                            val currentPage by currentPageAsState
+                            AnimatedSlide(
+                                active = main.pages.any { it == currentPage },
+                                slideDirection = SlideDirection.Top,
+                            ) {
+                                CenterAlignedTopAppBar(
+                                    title = { Text(stringResource(Res.string.app_name)) },
+                                    modifier = Modifier.appBarHazeEffect(HazeAppBarType.Top).padding(contentPadding),
+                                    colors = TopAppBarDefaults.largeTopAppBarColors(Color.Transparent),
+                                    windowInsets = AppWindowInsets.only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top)
                                 )
                             }
-                        }
-                    },
-                    contentWindowInsets = AppWindowInsets,
-                ) { padding ->
-                    val windowAdaptiveInfo = currentWindowAdaptiveInfo()
-                    val layoutDirection = LocalLayoutDirection.current
-                    val paddingStart = padding.calculateStartPadding(layoutDirection)
-                    val insetsPaddingStart = AppWindowInsets.asPaddingValues().calculateStartPadding(layoutDirection)
+                        },
+                        navigationSuite = { layoutType ->
+                            val currentPage by currentPageAsState
+                            NavigationSuite(
+                                modifier = Modifier.run {
+                                    if (layoutType == NavigationSuiteType.NavigationBar) {
+                                        appBarHazeEffect(HazeAppBarType.Bottom)
+                                    } else this
+                                },
+                                layoutType = layoutType,
+                                containers = NavigationSuiteDefaults.containers(
+                                    navigationBarContainer = { content ->
+                                        AnimatedSlide(
+                                            active = main.pages.any { page -> page == currentPage },
+                                            slideDirection = SlideDirection.Bottom,
+                                            content = content
+                                        )
+                                    },
+                                ),
+                                colors = NavigationSuiteDefaults.colors(
+                                    navigationBarContainerColor = Color.Transparent,
+                                    navigationRailContainerColor = Color.Transparent,
+                                    navigationDrawerContainerColor = Color.Transparent
+                                ),
+                                windowInsets = NavigationSuiteDefaults.windowInsetsWithDefaultSides(AppWindowInsets),
+                            ) {
+                                main.pages.forEach { route ->
+                                    item(
+                                        selected = currentPage == route,
+                                        onClick = { if (currentPage != route) main.navigate(route) },
+                                        icon = { Icon(route.icon, contentDescription = stringResource(route.label)) },
+                                        label = { Text(stringResource(route.label)) },
+                                    )
+                                }
+                            }
+                        },
+                        contentWindowInsets = AppWindowInsets,
+                    ) { padding ->
+                        val windowAdaptiveInfo = currentWindowAdaptiveInfo()
+                        val layoutDirection = LocalLayoutDirection.current
+                        val paddingStart = padding.calculateStartPadding(layoutDirection)
+                        val insetsPaddingStart =
+                            AppWindowInsets.asPaddingValues().calculateStartPadding(layoutDirection)
 
-                    SharedTransitionLayout {
-                        NavHost(
-                            navController,
-                            startDestination = main.pages.first(),
-                            modifier = Modifier.hazeSource(hazeState)
-                        ) {
-                            with(padding) { main.pages.forEach { with(it) { builder(windowAdaptiveInfo) } } }
+                        SharedTransitionLayout {
+                            NavHost(
+                                navController,
+                                startDestination = main.pages.first(),
+                                modifier = Modifier.hazeSource()
+                            ) {
+                                with(padding) { main.pages.forEach { with(it) { builder(windowAdaptiveInfo) } } }
 
-                            val subpagePadding = PaddingValues(start = paddingStart - insetsPaddingStart)
-                            with(subpagePadding) {
-                                with(tools) {
-                                    builtinTools.forEach { with(it.route) { builder(windowAdaptiveInfo) } }
+                                val subpagePadding = PaddingValues(start = paddingStart - insetsPaddingStart)
+                                with(subpagePadding) {
+                                    with(tools) {
+                                        builtinTools.forEach { with(it.route) { builder(windowAdaptiveInfo) } }
+                                    }
                                 }
                             }
                         }
