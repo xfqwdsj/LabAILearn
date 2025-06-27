@@ -53,6 +53,10 @@ kotlin {
         binaries.executable()
     }
 
+    compilerOptions {
+        freeCompilerArgs.add("-Xcontext-parameters")
+    }
+
     applyDefaultHierarchyTemplate()
 
     sourceSets {
