@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 fun AnimatedVisibilityScope.BlurEnterExit(
     modifier: Modifier = Modifier, maxRadius: Dp = 8.dp, content: @Composable BoxScope.() -> Unit
 ) {
-    val blurRadius by transition.animateDp { if (it != EnterExitState.PostExit) 0.dp else maxRadius }
+    val blurRadius by transition.animateDp { if (it != EnterExitState.Visible) maxRadius else 0.dp }
 
     Box(modifier.blur(blurRadius), content = content)
 }
