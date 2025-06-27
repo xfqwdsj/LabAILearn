@@ -58,6 +58,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
+                implementation(libs.kotlin.reflect)
                 implementation(libs.kotlinx.serialization.json)
                 implementation(compose.runtime)
                 implementation(compose.foundation)
