@@ -32,6 +32,8 @@ import top.ltfan.labailearn.ui.pages.main.SettingsPage
 import top.ltfan.labailearn.ui.pages.main.ToolsPage
 import kotlin.jvm.JvmSuppressWildcards
 import kotlin.reflect.KType
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Serializable
@@ -75,6 +77,11 @@ abstract class Route {
                 windowAdaptiveInfo: WindowAdaptiveInfo
             ) {
                 composableWithSlideTransition<Tools>(windowAdaptiveInfo) { BlurEnterExit { viewModel.ToolsPage() } }
+            }
+
+            abstract class Tool : Tools() {
+                @OptIn(ExperimentalUuidApi::class)
+                abstract val uuid: Uuid
             }
         }
 

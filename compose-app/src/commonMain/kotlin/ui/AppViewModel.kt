@@ -10,6 +10,8 @@ import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
 import top.ltfan.labailearn.data.Tool
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 class AppViewModel : ViewModel() {
     val main = object : Main {
@@ -34,13 +36,19 @@ class AppViewModel : ViewModel() {
         }
     }
 
+    @OptIn(ExperimentalUuidApi::class)
     val tools = object : Tools {
-        override val builtinTools: List<Tool> = listOf()
+        val builtinTools = listOf<Tool>()
 
-        override val routes: Map<Tool, Route> = builtinTools.associateWith { it.routeBuilder() }
+        val builtinToolsMap = builtinTools.map { it to it.routeBuilder(Uuid.random()) }.associateBy { it.second.uuid }
 
-        override val Tool.route: Route
-            get() = routes[this] ?: error("Tool $this does not have a route defined")
+        override val tools get() = builtinToolsMap
+
+        override val Uuid.tool: Tool
+            get() = tools[this]?.first ?: throw IllegalArgumentException("Tool with Uuid $Uuid not found")
+
+        override val Uuid.route
+            get() = tools[this]?.second ?: throw IllegalArgumentException("Tool with Uuid $Uuid not found")
     }
 
     val NavController.currentPageAsState: State<Route>
@@ -52,7 +60,8 @@ class AppViewModel : ViewModel() {
     val NavBackStackEntry.currentPage: Route?
         get() = pages.find { route -> destination.hierarchy.any { it.hasRoute(route::class) } }
 
-    val pages = main.pages + tools.routes.values
+    @OptIn(ExperimentalUuidApi::class)
+    val pages = main.pages + tools.tools.values.map { it.second }
 
     interface Main {
         val pages: List<Route.Main>
@@ -60,8 +69,13 @@ class AppViewModel : ViewModel() {
     }
 
     interface Tools {
-        val builtinTools: List<Tool>
-        val routes: Map<Tool, Route>
-        val Tool.route: Route
+        @OptIn(ExperimentalUuidApi::class)
+        val Uuid.tool: Tool
+
+        @OptIn(ExperimentalUuidApi::class)
+        val Uuid.route: Route.Main.Tools.Tool
+
+        @OptIn(ExperimentalUuidApi::class)
+        val tools: Map<Uuid, Pair<Tool, Route.Main.Tools.Tool>>
     }
 }

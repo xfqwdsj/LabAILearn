@@ -24,12 +24,13 @@ import org.jetbrains.compose.resources.stringResource
 import top.ltfan.labailearn.ui.*
 import top.ltfan.labailearn.ui.component.*
 import top.ltfan.labailearn.ui.theme.AppTheme
+import kotlin.uuid.ExperimentalUuidApi
 
 @OptIn(
     ExperimentalMaterial3Api::class,
     ExperimentalHazeMaterialsApi::class,
     ExperimentalHazeApi::class,
-    ExperimentalSharedTransitionApi::class,
+    ExperimentalSharedTransitionApi::class, ExperimentalUuidApi::class,
 )
 @Composable
 fun App() {
@@ -102,7 +103,7 @@ fun App() {
                                 val subpagePadding = PaddingValues(start = paddingStart - insetsPaddingStart)
                                 with(subpagePadding) {
                                     with(tools) {
-                                        builtinTools.forEach { with(it.route) { builder(windowAdaptiveInfo) } }
+                                        tools.forEach { with(it.key.route) { builder(windowAdaptiveInfo) } }
                                     }
                                 }
                             }

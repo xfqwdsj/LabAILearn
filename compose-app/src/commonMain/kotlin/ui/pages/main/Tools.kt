@@ -15,13 +15,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import top.ltfan.labailearn.data.RouteTransitionType
+import top.ltfan.labailearn.data.SharedTransitionType
 import top.ltfan.labailearn.data.transitionKeyOf
 import top.ltfan.labailearn.ui.AppViewModel
 import top.ltfan.labailearn.ui.component.tool.ToolCard
+import kotlin.uuid.ExperimentalUuidApi
 
 context(navController: NavController, sharedTransitionScope: SharedTransitionScope, animatedVisibilityScope: AnimatedVisibilityScope, contentPadding: PaddingValues) @OptIn(
-    ExperimentalSharedTransitionApi::class
+    ExperimentalSharedTransitionApi::class, ExperimentalUuidApi::class
 )
 @Composable
 fun AppViewModel.ToolsPage() {
@@ -41,24 +42,24 @@ fun AppViewModel.ToolsPage() {
         horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         with(tools) {
-            items(builtinTools, { it.hashCode() }) { tool ->
+            items(tools.keys.toList(), { it }) { uuid ->
                 with(sharedTransitionScope) {
                     ToolCard(
-                        tool,
+                        uuid.tool,
                         modifier = Modifier.sharedBounds(
                             sharedContentState = rememberSharedContentState(
-                                tool.route.transitionKeyOf(RouteTransitionType.Container)
+                                uuid.transitionKeyOf(SharedTransitionType.Container)
                             ),
                             animatedVisibilityScope = animatedVisibilityScope,
                             resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds,
                         ),
                         titleModifier = Modifier.sharedBounds(
                             sharedContentState = rememberSharedContentState(
-                                tool.route.transitionKeyOf(RouteTransitionType.Title)
+                                uuid.transitionKeyOf(SharedTransitionType.Title)
                             ),
                             animatedVisibilityScope = animatedVisibilityScope,
                         ),
-                        onToolClick = { navController.navigate(tool.route) },
+                        onToolClick = { navController.navigate(uuid.route) },
                         onCategoryClick = {},
                     )
                 }
