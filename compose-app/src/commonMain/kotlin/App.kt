@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import dev.chrisbanes.haze.ExperimentalHazeApi
 import dev.chrisbanes.haze.HazeState
@@ -33,9 +34,9 @@ import kotlin.uuid.ExperimentalUuidApi
     ExperimentalSharedTransitionApi::class, ExperimentalUuidApi::class,
 )
 @Composable
-fun App() {
+fun App(navController: NavHostController? = null) {
     with(viewModel { AppViewModel() }) {
-        with(rememberNavController()) {
+        with(navController ?: rememberNavController()) {
             with(remember { HazeState() }) {
                 AppTheme {
                     AdaptiveScaffold(
