@@ -16,8 +16,10 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.IntOffset
 import androidx.navigation.*
 import androidx.navigation.compose.composable
+import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
+import kotlinx.serialization.serializer
 import labailearn.compose_app.generated.resources.Res
 import labailearn.compose_app.generated.resources.label_navigation_overview
 import labailearn.compose_app.generated.resources.label_navigation_settings
@@ -91,6 +93,7 @@ abstract class Route {
             }
         }
 
+        @OptIn(InternalSerializationApi::class)
         context(viewModel: AppViewModel) inline fun <reified T : Any> NavGraphBuilder.composableWithSlideTransition(
             windowAdaptiveInfo: WindowAdaptiveInfo,
             typeMap: Map<KType, @JvmSuppressWildcards NavType<*>> = emptyMap(),
@@ -98,7 +101,7 @@ abstract class Route {
             noinline sizeTransform: (AnimatedContentTransitionScope<NavBackStackEntry>.() -> @JvmSuppressWildcards SizeTransform?)? = null,
             noinline content: @Composable (AnimatedContentScope.(NavBackStackEntry) -> Unit)
         ) {
-            val pages = viewModel.main.pages.map { it::class.qualifiedName }
+            val pages = viewModel.main.pages.map { it::class.serializer().descriptor.serialName }
             val navigationSuiteType = NavigationSuiteType.calculateFromAdaptiveInfo(windowAdaptiveInfo)
 
             val getDirection: AnimatedContentTransitionScope<NavBackStackEntry>.() -> AnimatedContentTransitionScope.SlideDirection =
