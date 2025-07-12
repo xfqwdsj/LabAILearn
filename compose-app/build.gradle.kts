@@ -78,6 +78,7 @@ kotlin {
                 implementation(libs.compose.material3.adaptive.layout)
                 implementation(libs.compose.material3.adaptive.navigation)
                 implementation(libs.compose.material3.windowSizeClass)
+                implementation(libs.ltmath)
                 implementation(libs.haze)
                 implementation(libs.haze.materials)
             }

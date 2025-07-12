@@ -11,6 +11,7 @@ compose-multiplatform = "1.8.2"
 compose-lifecycle = "2.9.1"
 compose-navigation = "2.9.0-beta03"
 compose-material3-adaptive = "1.1.2"
+ltmath = "0.1.0"
 haze = "1.6.4"
 
 [libraries]
@@ -27,6 +28,7 @@ compose-navigation = { module = "org.jetbrains.androidx.navigation:navigation-co
 compose-material3-adaptive-layout = { module = "org.jetbrains.compose.material3.adaptive:adaptive-layout", version.ref = "compose-material3-adaptive" }
 compose-material3-adaptive-navigation = { module = "org.jetbrains.compose.material3.adaptive:adaptive-navigation", version.ref = "compose-material3-adaptive" }
 compose-material3-windowSizeClass = { module = "org.jetbrains.compose.material3:material3-window-size-class", version.ref = "compose-multiplatform" }
+ltmath = { module = "top.ltfan.math:math", version.ref = "ltmath" }
 haze = { module = "dev.chrisbanes.haze:haze", version.ref = "haze" }
 haze-materials = { module = "dev.chrisbanes.haze:haze-materials", version.ref = "haze" }
 
