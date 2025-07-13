@@ -11,7 +11,7 @@ compose-multiplatform = "1.8.2"
 compose-lifecycle = "2.9.1"
 compose-navigation = "2.9.0-beta03"
 compose-material3-adaptive = "1.1.2"
-ltmath = "0.1.0"
+ltmath = "0.1.1"
 haze = "1.6.4"
 
 [libraries]
