@@ -13,7 +13,7 @@ compose-navigation = "2.9.0-beta03"
 compose-material3-adaptive = "1.1.2"
 ltmath = "0.1.1"
 multihaptic = "0.1.1"
-haze = "1.6.4"
+haze = "1.6.9"
 
 [libraries]
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
