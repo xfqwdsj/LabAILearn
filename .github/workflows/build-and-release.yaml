@@ -79,7 +79,7 @@ jobs:
           ./gradlew ciReleaseApp
 
       - name: Upload ${{ matrix.platform }} app
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: ${{ matrix.platform }} app
           path: build/assets/*
